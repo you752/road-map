@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Backend + AI Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0f16; --panel:#131826; --panel2:#161d2e; --border:#232b3d;
+  --text:#e7ebf3; --muted:#8892a6; --accent:#4fd6c0; --accent-dim:#2c5a54;
+  --amber:#f0b429; --amber-dim:#4a3a15; --danger:#e0616b;
+  --radius:10px;
+  color-scheme: dark;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
+}
+:root[data-theme="light"]{
+  --bg:#f4f5f8; --panel:#ffffff; --panel2:#eef0f5; --border:#dfe3ec;
+  --text:#161a22; --muted:#5b6478; --accent:#0f8f7d; --accent-dim:#cdeee7;
+  --amber:#b3760a; --amber-dim:#f6e6c2;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; min-height:100%; background:var(--bg); color:var(--text);
+  font-family:'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  font-size:14px; line-height:1.5;
+}
+h1,h2,h3{font-weight:600; letter-spacing:-.01em; margin:0}
+a{color:inherit}
+.wrap{max-width:960px; margin:0 auto; padding:20px 18px 60px}
+.topbar{position:sticky; top:0; z-index:20; background:var(--bg); border-bottom:1px solid var(--border); padding-top:env(safe-area-inset-top,0px)}
+.topbar-inner{max-width:960px; margin:0 auto; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px}
+.brand{display:flex; align-items:baseline; gap:8px}
+.brand .dot{color:var(--accent)}
+.brand h1{font-size:15px}
+.brand span{color:var(--muted); font-size:12px}
+.theme-btn{background:var(--panel); border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:6px 10px; cursor:pointer; font:inherit; font-size:12px}
+nav{display:flex; gap:2px; max-width:960px; margin:0 auto; padding:0 18px 10px; overflow-x:auto}
+nav button{background:none; border:none; color:var(--muted); font:inherit; font-size:13px; padding:8px 12px; border-radius:8px; cursor:pointer; white-space:nowrap}
+nav button.active{background:var(--panel2); color:var(--text)}
+.grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+@media(max-width:720px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px}
+.stat .n{font-size:26px; font-weight:700}
+.stat .l{color:var(--muted); font-size:12px; margin-top:4px}
+.section-title{font-size:13px; color:var(--muted); margin:26px 0 10px; text-transform:lowercase; display:flex; justify-content:space-between; align-items:center}
+.section-title:first-child{margin-top:0}
+.bar{height:6px; background:var(--panel2); border-radius:4px; overflow:hidden; border:1px solid var(--border)}
+.bar > i{display:block; height:100%; background:var(--accent); transition:width .4s ease}
+.pill{display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; border:1px solid var(--border); color:var(--muted)}
+.pill.current{color:var(--amber); border-color:var(--amber-dim); background:var(--amber-dim)}
+.pill.done{color:var(--accent); border-color:var(--accent-dim); background:var(--accent-dim)}
+.hero{background:linear-gradient(180deg,var(--panel2),var(--panel)); border:1px solid var(--border); border-radius:var(--radius); padding:22px; margin-bottom:18px}
+.hero-top{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap}
+.hero .pct{font-size:40px; font-weight:700; color:var(--accent)}
+.hero .today{color:var(--muted); font-size:12px; text-align:right}
+.hero .bar{height:8px; margin-top:14px}
+.hero-meta{display:flex; gap:22px; margin-top:16px; flex-wrap:wrap}
+.hero-meta div span{display:block; color:var(--muted); font-size:11px; margin-bottom:2px}
+.hero-meta div b{font-size:13px; font-weight:600}
+.timeline{position:relative; padding-left:22px}
+.timeline::before{content:"";position:absolute; left:6px; top:6px; bottom:6px; width:1px; background:var(--border)}
+.phase{position:relative; margin-bottom:12px}
+.phase::before{content:""; position:absolute; left:-22px; top:20px; width:9px; height:9px; border-radius:50%; background:var(--border); border:2px solid var(--bg)}
+.phase.current::before{background:var(--amber)}
+.phase.done::before{background:var(--accent)}
+.phase-head{display:flex; align-items:center; gap:10px; padding:14px 16px; cursor:pointer; user-select:none}
+.phase-head .num{color:var(--muted); font-size:12px; width:20px; flex-shrink:0}
+.phase-head .ti{flex:1; min-width:0}
+.phase-head h3{font-size:14px}
+.phase-head .dates{color:var(--muted); font-size:11px; margin-top:2px}
+.phase-head .side{display:flex; align-items:center; gap:10px; flex-shrink:0}
+.phase-head .pct{font-size:12px; color:var(--muted); min-width:34px; text-align:right}
+.phase-head .chev{color:var(--muted); transition:transform .15s ease; font-size:11px}
+.phase.open .chev{transform:rotate(90deg)}
+.phase-body{display:none; padding:0 16px 16px 46px}
+.phase.open .phase-body{display:block}
+.phase-body .bar{margin-bottom:12px}
+.tasklist{display:flex; flex-direction:column; gap:2px}
+.task{display:flex; align-items:center; gap:10px; padding:6px 0; font-size:13px}
+.task input[type=checkbox]{accent-color:var(--accent); width:14px; height:14px; flex-shrink:0}
+.task span{color:var(--text); flex:1; cursor:pointer}
+.task.done span{color:var(--muted); text-decoration:line-through}
+.icon-btn{background:none; border:none; color:var(--muted); cursor:pointer; font:inherit; font-size:13px; padding:2px 6px; border-radius:6px}
+.icon-btn:hover{color:var(--danger); background:var(--panel2)}
+.edit-field{background:var(--panel2); border:1px solid var(--border); color:var(--text); font:inherit; font-size:12px; border-radius:6px; padding:4px 8px}
+.edit-title{font-size:14px; font-weight:600; width:100%}
+.edit-dates{display:flex; gap:6px; margin-top:4px}
+.edit-dates input{font-size:11px; padding:3px 6px}
+.task-edit{flex:1; font-size:13px}
+.addrow{display:flex; gap:8px; margin-top:8px}
+.addrow input{flex:1}
+.pgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+@media(max-width:640px){.pgrid{grid-template-columns:1fr}}
+.pcard h3{font-size:14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; gap:8px}
+.pcard .tech{color:var(--muted); font-size:11px; margin:8px 0}
+.pcard .row{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:10px}
+.pcard .bar{margin-top:8px}
+.btn{background:var(--panel2); border:1px solid var(--border); color:var(--text); border-radius:8px; padding:8px 14px; cursor:pointer; font:inherit; font-size:12px}
+.btn:hover{border-color:var(--muted)}
+.btn.on{color:var(--amber); border-color:var(--amber-dim); background:var(--amber-dim)}
+.foot-actions{display:flex; justify-content:space-between; margin-top:24px; gap:10px}
+.plist{display:flex; flex-direction:column; gap:10px}
+.prow{display:flex; align-items:center; gap:12px}
+.prow .lbl{width:150px; flex-shrink:0; font-size:12px; color:var(--muted)}
+.prow .bar{flex:1}
+.prow .val{width:40px; text-align:right; font-size:12px}
+.view{display:none}
+.view.active{display:block}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="dot">●</span><h1>backend<span>.</span>ai<span> roadmap</span></h1></div>
+    <button class="theme-btn" id="themeBtn">light mode</button>
+  </div>
+  <nav id="nav">
+    <button data-v="dashboard" class="active">Dashboard</button>
+    <button data-v="roadmap">Roadmap</button>
+    <button data-v="projects">Projects</button>
+    <button data-v="progress">Progress</button>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <div class="view active" id="v-dashboard">
+    <div class="hero">
+      <div class="hero-top">
+        <div><div class="pill" id="heroDate"></div><div class="pct" id="heroPct">0%</div></div>
+        <div class="today" id="heroPeriod"></div>
+      </div>
+      <div class="bar"><i id="heroBar" style="width:0%"></i></div>
+      <div class="hero-meta">
+        <div><span>Current phase</span><b id="heroPhase">—</b></div>
+        <div><span>Current project</span><b id="heroProject">—</b></div>
+        <div><span>Tasks done</span><b id="heroDone">0 / 0</b></div>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card stat"><div class="n" id="statTotal">0</div><div class="l">total tasks</div></div>
+      <div class="card stat"><div class="n" id="statDone">0</div><div class="l">completed</div></div>
+      <div class="card stat"><div class="n" id="statRemain">0</div><div class="l">remaining</div></div>
+      <div class="card stat"><div class="n" id="statPct">0%</div><div class="l">progress</div></div>
+    </div>
+    <div class="section-title">phase progress</div>
+    <div class="plist" id="dashPhaseList"></div>
+  </div>
+
+  <div class="view" id="v-roadmap">
+    <div class="section-title"><span>timeline</span><button class="btn" id="editBtn">Edit mode: Off</button></div>
+    <div class="timeline" id="timeline"></div>
+    <div class="foot-actions">
+      <button class="btn" id="addPhaseBtn" style="display:none">+ Add phase</button>
+      <button class="btn" id="resetBtn">Reset all progress</button>
+    </div>
+  </div>
+
+  <div class="view" id="v-projects">
+    <div class="pgrid" id="projectGrid"></div>
+  </div>
+
+  <div class="view" id="v-progress">
+    <div class="grid" style="margin-bottom:20px">
+      <div class="card stat"><div class="n" id="pgTotal">0</div><div class="l">total tasks</div></div>
+      <div class="card stat"><div class="n" id="pgDone">0</div><div class="l">completed</div></div>
+      <div class="card stat"><div class="n" id="pgRemain">0</div><div class="l">remaining</div></div>
+      <div class="card stat"><div class="n" id="pgPct">0%</div><div class="l">overall</div></div>
+    </div>
+    <div class="section-title">progress per phase</div>
+    <div class="plist" id="progPhaseList"></div>
+    <div class="section-title">projects</div>
+    <div class="hero-meta">
+      <div><span>Completed</span><b id="pgCompletedProjects">—</b></div>
+      <div><span>Current</span><b id="pgCurrentProject">—</b></div>
+      <div><span>Upcoming</span><b id="pgUpcomingProject">—</b></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const DEFAULT_PHASES = [
+{t:"NestJS", s:"2026-09-26", e:"2026-10-15", k:["NestJS setup & CLI","Modules","Controllers","Providers","Dependency Injection","Decorators","Middleware","Guards","Pipes","Interceptors","Exception Filters","DTOs","Validation","Authentication","Authorization","JWT","MongoDB + Mongoose","ConfigModule","Swagger","Testing basics"]},
+{t:"NestJS Mini Project", s:"2026-10-16", e:"2026-10-20", k:["Create NestJS project","Authentication","Users","CRUD","Validation","Guards","Swagger","Testing","Deployment"]},
+{t:"E-Commerce", s:"2026-10-21", e:"2026-11-02", k:["Users & Authentication","Products","Categories","Cart","Orders","Inventory","Admin","Search & Filtering","Redis caching","Payment integration","Swagger","Testing","Deployment"]},
+{t:"Booking System", s:"2026-11-03", e:"2026-11-13", k:["Users","Services","Providers","Availability","Booking","Prevent double booking","Transactions","Redis","Notifications","Background jobs","Swagger","Testing","Deployment"]},
+{t:"Real-Time Chat", s:"2026-11-14", e:"2026-11-27", k:["Socket.IO with NestJS","Private chat","Group chat","Messages","Online / Offline status","Typing indicator","Read receipts","Message history","Redis","Notifications","Testing","Deployment"]},
+{t:"AI Backend Project", s:"2026-11-28", e:"2026-12-20", k:["Python basics","AI API integration","Prompt engineering","Embeddings","Vector database","RAG","AI-powered endpoint","Authentication","Redis","Background jobs","Logging","Swagger","Deployment"]},
+{t:"Python + AI Fundamentals", s:"2026-12-21", e:"2027-01-10", k:["Python","NumPy","Pandas","Matplotlib","Statistics","Probability","Linear Algebra basics","Machine Learning fundamentals","Scikit-learn"]},
+{t:"AI", s:"2027-01-11", e:null, k:["Supervised Learning","Unsupervised Learning","Model Evaluation","Feature Engineering","Deep Learning","PyTorch","Neural Networks","Transformers","LLMs","RAG","AI Agents","AI Backend Architecture"]},
+];
+
+const PROJECTS = [
+  {name:"Social Media", status:"Completed", tech:"Node.js, Express, TypeScript, MongoDB, Mongoose", date:"Completed", progress:100},
+  {name:"Saraha", status:"Completed", tech:"Node.js, JWT, bcrypt, MongoDB/Mongoose, Redis (OTP), Joi", date:"Completed", progress:100},
+  {name:"E-Commerce", status:"Planned", tech:"NestJS, MongoDB, Redis, Payments", date:"Oct 21 – Nov 2, 2026", progress:0},
+  {name:"Booking System", status:"Planned", tech:"NestJS, Redis, Background jobs", date:"Nov 3 – 13, 2026", progress:0},
+  {name:"Real-Time Chat", status:"Planned", tech:"NestJS, Socket.IO, Redis", date:"Nov 14 – 27, 2026", progress:0},
+  {name:"AI Backend", status:"Planned", tech:"Python, NestJS, RAG, Vector DB", date:"Nov 28 – Dec 20, 2026", progress:0},
+];
+
+const DATA_KEY = "roadmap_data_v2";
+const OLD_KEY = "roadmap_progress_v1";
+let uid = 0;
+function nid(prefix){ return prefix + (Date.now().toString(36)) + (uid++); }
+
+function buildDefaultData(){
+  let oldDone = {};
+  try{ oldDone = JSON.parse(localStorage.getItem(OLD_KEY) || "{}"); }catch(e){}
+  const phases = DEFAULT_PHASES.map((p,pi)=>({
+    id: 'ph'+pi,
+    title: p.t, start: p.s, end: p.e,
+    tasks: p.k.map((label,ti)=>({ id:'ph'+pi+'-tk'+ti, label, done: !!oldDone['p'+pi+'-t'+ti] }))
+  }));
+  return { phases };
+}
+
+let DATA;
+try{
+  const raw = localStorage.getItem(DATA_KEY);
+  DATA = raw ? JSON.parse(raw) : buildDefaultData();
+}catch(e){ DATA = buildDefaultData(); }
+function save(){ try{ localStorage.setItem(DATA_KEY, JSON.stringify(DATA)); }catch(e){} }
+save();
+
+let editMode = false;
+let openIdx = null;
+
+const today = new Date();
+function parse(d){ return d ? new Date(d+"T00:00:00") : null; }
+function fmt(d){ return d ? d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : 'onward'; }
+
+function currentPhaseIndex(){
+  const phases = DATA.phases;
+  for(let i=0;i<phases.length;i++){
+    const s = parse(phases[i].start), e = parse(phases[i].end);
+    if(s && today >= s && (!e || today <= e)) return i;
+  }
+  if(phases.length && phases[0].start && today < parse(phases[0].start)) return 0;
+  return Math.max(phases.length-1,0);
+}
+
+function phaseStats(phase){
+  const ks = phase.tasks;
+  const d = ks.filter(k=>k.done).length;
+  return {total:ks.length, done:d, remain:ks.length-d, pct: ks.length? Math.round(d/ks.length*100):0};
+}
+function overallStats(){
+  let total=0, d=0;
+  DATA.phases.forEach(p=>{ const s=phaseStats(p); total+=s.total; d+=s.done; });
+  return {total, done:d, remain:total-d, pct: total? Math.round(d/total*100):0};
+}
+
+function renderDashboard(){
+  const o = overallStats();
+  const curIdx = currentPhaseIndex();
+  const cur = DATA.phases[curIdx];
+  document.getElementById('heroPct').textContent = o.pct+'%';
+  document.getElementById('heroBar').style.width = o.pct+'%';
+  document.getElementById('heroDate').textContent = today.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('heroPeriod').textContent = cur ? ('Phase '+(curIdx+1)+' window: '+fmt(parse(cur.start))+' – '+fmt(parse(cur.end))) : '';
+  document.getElementById('heroPhase').textContent = cur ? ('Phase '+(curIdx+1)+' · '+cur.title) : '—';
+  const proj = PROJECTS.find(p=>p.status==='Planned') || PROJECTS[PROJECTS.length-1];
+  document.getElementById('heroProject').textContent = proj.name;
+  document.getElementById('heroDone').textContent = o.done+' / '+o.total;
+  document.getElementById('statTotal').textContent = o.total;
+  document.getElementById('statDone').textContent = o.done;
+  document.getElementById('statRemain').textContent = o.remain;
+  document.getElementById('statPct').textContent = o.pct+'%';
+  const list = document.getElementById('dashPhaseList');
+  list.innerHTML = '';
+  DATA.phases.forEach((p,i)=>{
+    const s = phaseStats(p);
+    const row = document.createElement('div');
+    row.className = 'prow';
+    row.innerHTML = `<div class="lbl">${i+1}. ${p.title}</div><div class="bar"><i style="width:${s.pct}%"></i></div><div class="val">${s.pct}%</div>`;
+    list.appendChild(row);
+  });
+}
+
+function renderTimeline(){
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = '';
+  const curIdx = currentPhaseIndex();
+  document.getElementById('addPhaseBtn').style.display = editMode ? '' : 'none';
+  DATA.phases.forEach((p,i)=>{
+    const s = phaseStats(p);
+    const isCurrent = i===curIdx;
+    const isDone = s.pct===100 && !isCurrent;
+    const wrap = document.createElement('div');
+    wrap.className = 'phase card' + (isCurrent?' current':'') + (isDone?' done':'') + ((openIdx===i)?' open':'');
+
+    const head = document.createElement('div');
+    head.className = 'phase-head';
+    if(editMode){
+      head.innerHTML = `
+        <div class="num">${String(i+1).padStart(2,'0')}</div>
+        <div class="ti">
+          <input class="edit-field edit-title" data-role="title" value="${p.title.replace(/"/g,'&quot;')}">
+          <div class="edit-dates">
+            <input type="date" class="edit-field" data-role="start" value="${p.start||''}">
+            <input type="date" class="edit-field" data-role="end" value="${p.end||''}">
+          </div>
+        </div>
+        <div class="side">
+          <div class="pct">${s.pct}%</div>
+          <button class="icon-btn" data-role="delphase" title="Delete phase">✕</button>
+        </div>`;
+      head.querySelector('[data-role=title]').addEventListener('input', e=>{ p.title=e.target.value; save(); });
+      head.querySelector('[data-role=start]').addEventListener('change', e=>{ p.start=e.target.value||null; save(); renderAll(); });
+      head.querySelector('[data-role=end]').addEventListener('change', e=>{ p.end=e.target.value||null; save(); renderAll(); });
+      head.querySelector('[data-role=delphase]').addEventListener('click', ev=>{
+        ev.stopPropagation();
+        if(confirm('Delete phase "'+p.title+'" and all its tasks?')){ DATA.phases.splice(i,1); save(); renderAll(); }
+      });
+    } else {
+      head.innerHTML = `
+        <div class="num">${String(i+1).padStart(2,'0')}</div>
+        <div class="ti">
+          <h3>${p.title} ${isCurrent?'<span class="pill current">current</span>':(isDone?'<span class="pill done">done</span>':'')}</h3>
+          <div class="dates">${fmt(parse(p.start))} – ${fmt(parse(p.end))}</div>
+        </div>
+        <div class="side"><div class="pct">${s.pct}%</div><div class="chev">▸</div></div>`;
+      head.addEventListener('click', ()=>{ openIdx = (openIdx===i)?null:i; renderTimeline(); });
+    }
+
+    const body = document.createElement('div');
+    body.className = 'phase-body';
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.innerHTML = `<i style="width:${s.pct}%"></i>`;
+    const tasks = document.createElement('div');
+    tasks.className = 'tasklist';
+    p.tasks.forEach((task)=>{
+      const row = document.createElement('div');
+      row.className = 'task' + (task.done?' done':'');
+      if(editMode){
+        row.innerHTML = `<input type="checkbox" ${task.done?'checked':''}><input class="edit-field task-edit" value="${task.label.replace(/"/g,'&quot;')}"><button class="icon-btn" title="Delete task">✕</button>`;
+        row.querySelector('input[type=checkbox]').addEventListener('change', e=>{ task.done=e.target.checked; save(); renderAll(); });
+        row.querySelector('.task-edit').addEventListener('input', e=>{ task.label=e.target.value; save(); });
+        row.querySelector('.icon-btn').addEventListener('click', ()=>{
+          p.tasks = p.tasks.filter(t=>t!==task); save(); renderAll();
+        });
+      } else {
+        row.innerHTML = `<input type="checkbox" ${task.done?'checked':''}><span>${task.label}</span>`;
+        const toggle = ()=>{ task.done=!task.done; save(); renderAll(); };
+        row.querySelector('input').addEventListener('change', toggle);
+        row.querySelector('span').addEventListener('click', toggle);
+      }
+      tasks.appendChild(row);
+    });
+    body.appendChild(bar);
+    body.appendChild(tasks);
+    if(editMode){
+      const addrow = document.createElement('div');
+      addrow.className = 'addrow';
+      addrow.innerHTML = `<input class="edit-field" placeholder="New task…"><button class="btn">+ Add task</button>`;
+      const input = addrow.querySelector('input');
+      const addTask = ()=>{
+        const v = input.value.trim();
+        if(!v) return;
+        p.tasks.push({id:nid('tk'), label:v, done:false});
+        save(); openIdx = i; renderAll();
+      };
+      addrow.querySelector('button').addEventListener('click', addTask);
+      input.addEventListener('keydown', e=>{ if(e.key==='Enter') addTask(); });
+      body.appendChild(addrow);
+    }
+    wrap.appendChild(head);
+    wrap.appendChild(body);
+    tl.appendChild(wrap);
+  });
+}
+
+function renderProjects(){
+  const grid = document.getElementById('projectGrid');
+  grid.innerHTML = '';
+  PROJECTS.forEach(p=>{
+    const el = document.createElement('div');
+    el.className = 'card pcard';
+    el.innerHTML = `<h3>${p.name} <span class="pill ${p.status==='Completed'?'done':''}">${p.status}</span></h3>
+      <div class="tech">${p.tech}</div>
+      <div class="bar"><i style="width:${p.progress}%"></i></div>
+      <div class="row"><span>${p.date}</span><span>${p.progress}%</span></div>`;
+    grid.appendChild(el);
+  });
+}
+
+function renderProgress(){
+  const o = overallStats();
+  const curIdx = currentPhaseIndex();
+  document.getElementById('pgTotal').textContent = o.total;
+  document.getElementById('pgDone').textContent = o.done;
+  document.getElementById('pgRemain').textContent = o.remain;
+  document.getElementById('pgPct').textContent = o.pct+'%';
+  const list = document.getElementById('progPhaseList');
+  list.innerHTML = '';
+  DATA.phases.forEach((p,i)=>{
+    const s = phaseStats(p);
+    const row = document.createElement('div');
+    row.className = 'prow';
+    row.innerHTML = `<div class="lbl">${i+1}. ${p.title}</div><div class="bar"><i style="width:${s.pct}%"></i></div><div class="val">${s.pct}%</div>`;
+    list.appendChild(row);
+  });
+  const completed = PROJECTS.filter(p=>p.status==='Completed').map(p=>p.name).join(', ');
+  const upcoming = PROJECTS.find(p=>p.status==='Planned');
+  document.getElementById('pgCompletedProjects').textContent = completed || '—';
+  document.getElementById('pgCurrentProject').textContent = DATA.phases[curIdx] ? DATA.phases[curIdx].title : '—';
+  document.getElementById('pgUpcomingProject').textContent = upcoming ? upcoming.name : '—';
+}
+
+function renderAll(){ renderDashboard(); renderTimeline(); renderProjects(); renderProgress(); }
+renderAll();
+
+document.getElementById('nav').addEventListener('click', (e)=>{
+  const btn = e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('v-'+btn.dataset.v).classList.add('active');
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm('Reset all task progress (unchecks every task, keeps your edits)?')){
+    DATA.phases.forEach(p=>p.tasks.forEach(t=>t.done=false));
+    save(); renderAll();
+  }
+});
+
+const editBtn = document.getElementById('editBtn');
+editBtn.addEventListener('click', ()=>{
+  editMode = !editMode;
+  editBtn.textContent = 'Edit mode: ' + (editMode?'On':'Off');
+  editBtn.classList.toggle('on', editMode);
+  if(editMode && openIdx===null && DATA.phases.length) openIdx = currentPhaseIndex();
+  renderTimeline();
+});
+
+document.getElementById('addPhaseBtn').addEventListener('click', ()=>{
+  const ph = {id:nid('ph'), title:'New phase', start:null, end:null, tasks:[]};
+  DATA.phases.push(ph); save();
+  openIdx = DATA.phases.length-1;
+  renderAll();
+});
+
+const themeBtn = document.getElementById('themeBtn');
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  themeBtn.textContent = t==='light' ? 'dark mode' : 'light mode';
+  try{ localStorage.setItem('roadmap_theme', t); }catch(e){}
+}
+let savedTheme = 'dark';
+try{ savedTheme = localStorage.getItem('roadmap_theme') || 'dark'; }catch(e){}
+applyTheme(savedTheme);
+themeBtn.addEventListener('click', ()=> applyTheme(document.documentElement.getAttribute('data-theme')==='light' ? 'dark' : 'light'));
+</script>
+</body>
+</html>
